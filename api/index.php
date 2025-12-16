@@ -1,34 +1,27 @@
 <?php
-// 1. Bật hiện lỗi tối đa
+// 1. Bật hiện lỗi để lỡ có gì còn biết
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-echo "<div style='background: #f0f0f0; padding: 10px; border-bottom: 2px solid red;'>";
-echo "<h3>🔍 TRẠM KIỂM SOÁT DEBUG</h3>";
+// 2. GIẢ LẬP MÔI TRƯỜNG (Fix lỗi trắng trang)
+// Chuyển thư mục làm việc về public (để code tìm thấy view, model...)
+chdir(__DIR__ . '/../public');
 
-// 2. Kiểm tra biến môi trường (Database)
-$host = getenv('DB_HOST');
-if ($host) {
-    echo "✅ Biến môi trường Vercel: <b>ĐÃ NHẬN</b> (Host: $host)<br>";
-} else {
-    echo "❌ Biến môi trường Vercel: <b>KHÔNG TÌM THẤY</b> (Hãy kiểm tra lại Settings trên Vercel)<br>";
+// Tự động tạo biến $_GET['url'] từ đường dẫn thực tế
+// Vì Vercel không tự làm việc này như .htaccess
+$request_uri = $_SERVER['REQUEST_URI'];
+$script_name = $_SERVER['SCRIPT_NAME']; // Thường là /api/index.php
+
+// Lọc bỏ phần query string (?id=1...)
+if (strpos($request_uri, '?') !== false) {
+    $request_uri = substr($request_uri, 0, strpos($request_uri, '?'));
 }
 
-// 3. Kiểm tra file public/index.php
-$appFile = __DIR__ . '/../public/index.php';
-echo "Checking path: $appFile<br>";
+// Xử lý đường dẫn thừa để lấy đúng cái MVC cần
+// Ví dụ: /home/index -> home/index
+$url = trim($request_uri, '/');
+$_GET['url'] = $url;
 
-if (file_exists($appFile)) {
-    echo "✅ Tìm thấy file public/index.php. Bắt đầu nạp...<br>";
-    echo "</div>"; // Đóng khung debug
-    
-    // --- NẠP FILE CHÍNH ---
-    require $appFile;
-    // ----------------------
-    
-} else {
-    echo "❌ <b>LỖI CHẾT NGƯỜI:</b> Không tìm thấy file public/index.php<br>";
-    die();
-}
-?>
+// 3. Gọi file index chính
+require 'index.php';
