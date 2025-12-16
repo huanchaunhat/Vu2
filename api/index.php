@@ -1,14 +1,19 @@
 <?php
-// Bật hiện lỗi NGAY TỪ CỔNG VÀO (để bắt lỗi cú pháp của file khác)
+// 1. Bật hiển thị lỗi NGAY TỪ ĐẦU
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Kiểm tra xem file có tồn tại không trước khi gọi
-$file = __DIR__ . '/../public/index.php';
+// 2. Định nghĩa đường dẫn file cần gọi
+$appFile = __DIR__ . '/../public/index.php';
 
-if (file_exists($file)) {
-    require $file;
+// 3. Kiểm tra và gọi file
+if (file_exists($appFile)) {
+    require $appFile;
 } else {
-    echo "LỖI: Không tìm thấy file public/index.php tại đường dẫn: " . $file;
+    // Nếu sai đường dẫn thì báo ngay
+    http_response_code(500);
+    echo "<h1>LỖI: Không tìm thấy file public/index.php</h1>";
+    echo "<p>Đường dẫn hiện tại: " . __DIR__ . "</p>";
+    echo "<p>Đang tìm tại: " . $appFile . "</p>";
 }
