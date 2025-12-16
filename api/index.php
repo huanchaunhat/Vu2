@@ -1,4 +1,5 @@
 <?php
+echo "👉 Đã vào được public/index.php<br>";
 // Bật hiện lỗi tối đa
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -21,6 +22,7 @@ echo "✅ URL nhận được: <b>" . ($url ?: '(Trang chủ)') . "</b><br>";
 
 // 3. Gọi file index chính
 echo "⏳ Đang gọi public/index.php...<br>";
+
 
 if (file_exists('index.php')) {
     require 'index.php';
